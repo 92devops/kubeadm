@@ -179,8 +179,8 @@ node2    NotReady   <none>   78s     v1.18.4
 #### 部署 flannel 网络插件
 
 ```
-~]# wget https://raw.githubusercontent.com/imirsh/kubernetes/master/mainfests/flannel/v0.12.0/kube-flannel.yaml
-~]# kubectl apply -f kube-flannel.yml
+~]# wget https://raw.githubusercontent.com/92devops/kubeadm/master/kube-flannel-v0.12.0.yaml
+~]# kubectl apply -f kube-flannel-v0.12.0.yaml
 ~]# kubectl  get nodes
 NAME     STATUS   ROLES    AGE   VERSION
 master   Ready    master   29m   v1.18.4
@@ -208,3 +208,23 @@ done
 
 ~]# kubectl delete pods -l k8s-app=kube-proxy -n kube-system
 ```
+
+#### 安装 [Kuboard](https://github.com/easzlab/kubeasz/blob/master/docs/guide/kuboard.md)
+
+1. 部署 kuboard
+
+```
+~]# kubectl apply -f https://kuboard.cn/install-script/kuboard.yaml
+~]# kubectl apply -f https://addons.kuboard.cn/metrics-server/0.3.6/metrics-server.yaml
+```
+
+2. 获取 token
+
+```
+~]# echo $(kubectl -n kube-system get secret $(kubectl -n kube-system get secret | grep kuboard-user | awk '{print $1}') -o go-template='{{.data.token}}' | base64 -d)  
+```
+
+3. 访问 UI
+
+Kuboard Service 使用了 NodePort 的方式暴露服务，NodePort 为 32567；您可以按如下方式访问 Kuboard。
+http://任意一个Worker节点的IP地址:32567/
